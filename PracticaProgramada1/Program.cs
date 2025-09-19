@@ -1,90 +1,96 @@
 ﻿using System;
 
-namespace SumasNaturales.App
+class Program
 {
-    internal static class Program
+    // SumFor: utiliza la fórmula de Gauss, con manejo de desbordamiento
+    public static int SumFor(int n)
     {
-        static void Main()
+        checked
         {
-            const int Max = int.MaxValue;
-
-            Console.WriteLine("• SumFor:");
-            Console.WriteLine($"\t◦ From 1 to Max → n: {FindLastValidAsc(SumFor, 1)}");
-            Console.WriteLine($"\t◦ From Max to 1 → n: {FindFirstValidDesc(SumFor, Max)}");
-            Console.WriteLine();
-            Console.WriteLine("• SumIte:");
-            Console.WriteLine("Por favor, espere. El cálculo de SumIte puede tardar un momento..."); 
-            Console.WriteLine($"\t◦ From 1 to Max → n: {FindLastValidAsc(SumIte, 1)}");
-            Console.WriteLine($"\t◦ From Max to 1 → n: {FindFirstValidDesc(SumIte, int.MaxValue)}");
+            return n * (n + 1) / 2;
         }
+    }
 
-        static int SumFor(int n)
+    // SumIte: utiliza una versión iterativa, con manejo de desbordamiento
+    public static int SumIte(int n)
+    {
+        int sum = 0;
+        checked
         {
-            checked
+            for (int i = 1; i <= n; i++)
             {
-                return (n * (n + 1)) / 2;
+                sum += i;
             }
         }
+        return sum;
+    }
 
-        static int SumIte(int n)
+    // Método para validar un 'sum' (suma)
+    public static bool IsValidSum(int sum)
+    {
+        return sum > 0;
+    }
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("• SumFor:");
+        Console.WriteLine($"\t◦ From 1 to Max → n: {FindLastValidAsc(SumFor, 1)}");
+        Console.WriteLine($"\t◦ From Max to 1 → n: {FindFirstValidDesc(SumFor, int.MaxValue)}");
+
+        Console.WriteLine("\n• SumIte:");
+        Console.WriteLine($"\t◦ From 1 to Max → n: {FindLastValidAsc(SumIte, 1)}");
+        Console.WriteLine($"\t◦ From Max to 1 → n: {FindFirstValidDesc(SumIte, int.MaxValue)}");
+    }
+
+    // Busca el último 'n' válido de forma ascendente
+    public static string FindLastValidAsc(Func<int, int> sumMethod, int startN)
+    {
+        int lastValidN = 0;
+        int lastValidSum = 0;
+
+        for (int n = startN; n <= int.MaxValue; n++)
         {
-            int acc = 0;
-            checked
+            try
             {
-                for (int i = 1; i <= n; i++)
+                int currentSum = sumMethod(n);
+                if (IsValidSum(currentSum))
                 {
-                    acc += i;
+                    lastValidN = n;
+                    lastValidSum = currentSum;
                 }
-            }
-            return acc;
-        }
-
-        static string FindLastValidAsc(Func<int, int> f, int max)
-        {
-            int lastN = 0;
-            int lastSum = 0;
-
-            for (int n = 1; n <= max; n++)
-            {
-                try
-                {
-                    int s = f(n);
-                    if (s > 0)
-                    {
-                        lastN = n;
-                        lastSum = s;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                catch (OverflowException)
+                else
                 {
                     break;
                 }
             }
-            return $"{lastN} → sum: {lastSum}";
-        }
-
-        static string FindFirstValidDesc(Func<int, int> f, int max)
-        {
-            for (int n = max; n >= 1; n--)
+            catch (OverflowException)
             {
-                try
+                // El desbordamiento indica el final de los valores válidos
+                break;
+            }
+        }
+        return $"{lastValidN} → sum: {lastValidSum}";
+    }
+
+    // Busca el primer 'n' válido de forma descendente
+    public static string FindFirstValidDesc(Func<int, int> sumMethod, int startN)
+    {
+        for (int n = startN; n >= 1; n--)
+        {
+            try
+            {
+                int currentSum = sumMethod(n);
+                if (IsValidSum(currentSum))
                 {
-                    int s = f(n);
-                    if (s > 0)
-                    {
-                        return $"{n} → sum: {s}";
-                    }
-                }
-                catch (OverflowException)
-                {
-                    // El desbordamiento es esperado. Continúe buscando.
+                    return $"{n} → sum: {currentSum}";
                 }
             }
-            return "No se encontró un valor válido.";
+            catch (OverflowException)
+            {
+                // Ignoramos el desbordamiento y seguimos buscando
+                // El bucle de for ya manejará el decremento del valor
+            }
         }
+        return "No se encontró un valor válido.";
     }
 }
