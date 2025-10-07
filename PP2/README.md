@@ -263,7 +263,8 @@ OR	`	`	1 si al menos uno es 1	1010 | 1100
 XOR	^	1 si son diferentes	1010 ^ 1100	0110
 
 
-Este puede ser el vínculo compartido de dicho chatbot.
+Fuente: https://chatgpt.com/c/68e534df-1778-8320-be53-278b6d5cd6fb
+
 Las respuestas a las siguientes preguntas:
 
 ¿Cuál es el número que resulta al multiplicar, si se introducen los valores máximos permitidos en a y b? Indíquelo en todas las bases (binaria, octal, decimal y hexadecimal).
