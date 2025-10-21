@@ -20,7 +20,7 @@ Link referencia: https://chatgpt.com/share/68f6dcb2-5088-8000-b629-36dc57c7538d
 
 ¿Es posible enviar valores en el Body (por ejemplo, en el Form) del Request de tipo GET?
 
-Respuesta: Me parece que no es posible debido a que GET esta diseñado para mostras datos.
+Respuesta: Me parece que no es posible debido a que GET esta diseñado para mostrar datos.
 
 
 ¿Qué ventajas y desventajas observa con el Minimal API si se compara con la opción de utilizar Controllers?
