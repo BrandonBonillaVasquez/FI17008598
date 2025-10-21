@@ -12,7 +12,9 @@ Se utilizó IA Copilot y Chat GPT.
 
 # Prompts (consultas y respuestas) de los chatbots de IA (Copilot, Gemini, ChatGPT, etc.) que haya utilizado. Este puede ser el vínculo compartido de dicho chatbot.
 Se comparte vínculo de Chat GPT con consultas y sus debidas respuestas.
-https://chatgpt.com/share/68f6dcb2-5088-8000-b629-36dc57c7538d
+
+Link referencia: https://chatgpt.com/share/68f6dcb2-5088-8000-b629-36dc57c7538d
+
 
 # Las respuestas a las siguientes preguntas (deben ser respondidas por usted mismo):
 
