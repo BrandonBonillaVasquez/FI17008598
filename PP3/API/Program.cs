@@ -1,16 +1,14 @@
 using System.Xml.Serialization;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -19,78 +17,101 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var myList = new List<string>();
-
 app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
 
-app.MapGet("/obtain", () => myList);
+object FormatError(string message) => new { error = message };
 
-app.MapGet("/obtain/{index:int}", (int index) =>
+string SerializeToXml(Result result)
 {
-    if (index < myList.Count && index > -1)
-    {
-        var value = myList[index];
-        return Results.Ok(value);
-    }
+    var xmlSerializer = new XmlSerializer(typeof(Result));
+    using var stringWriter = new StringWriter();
+    xmlSerializer.Serialize(stringWriter, result);
+    return stringWriter.ToString();
+}
 
+app.MapPost("/include/{position:int}", (
+    [FromRoute] int position,
+    [FromQuery] string value,
+    [FromForm] string text,
+    [FromHeader(Name = "xml")] bool xml = false) =>
+{
+    if (position < 0)
+        return Results.BadRequest(FormatError("'position' must be 0 or higher"));
+
+    if (string.IsNullOrWhiteSpace(value))
+        Results.BadRequest(FormatError("'value' cannot be empty"));
+
+    if (string.IsNullOrWhiteSpace(text))
+        return Results.BadRequest(FormatError("'text' cannot be empty"));
+
+    var words = text.Split(' ').ToList();
+    var ori = text;
+
+    if (position >= words.Count)
+        words.Add(value);
     else
+        words.Insert(position, value);
 
-    {
-        return Results.NotFound($"Item in [{index}] not found");
-    }
-    
+    var newText = string.Join(" ", words);
+    var result = new Result { Ori = ori, New = newText };
+
+    return xml
+        ? Results.Text(SerializeToXml(result), "application/xml")
+        : Results.Json(result);
 });
 
-app.MapPost("/include", ([FromForm] string item) =>
+app.MapPut("/replace/{length:int}", (
+    [FromRoute] int length,
+    [FromQuery] string value,
+    [FromForm] string text,
+    [FromHeader(Name = "xml")] bool xml = false) =>
 {
-    myList.Add(item);
-    return Results.Created("/include/{item}", item);
-}).DisableAntiforgery();
+    if (length <= 0)
+        return Results.BadRequest(FormatError("'length' must be greater than 0"));
 
+    if (string.IsNullOrWhiteSpace(value))
+        return Results.BadRequest(FormatError("'value' cannot be empty"));
 
-app.MapPut("/replace/{index:int}", ([FromRoute] int index, [FromForm] string value) =>
-{
-    if (index < myList.Count && index > -1)
-    {
-        myList[index] = value;
-        return Results.Ok($"Item in [{index}] replace to '{value}'");
-    }
-    else
-    {
-        return Results.NotFound($"Item in [{index}] not found");
-    }
-}).DisableAntiforgery();
+    if (string.IsNullOrWhiteSpace(text))
+        return Results.BadRequest(FormatError("'text' cannot be empty"));
 
+    var words = text.Split(' ');
+    var ori = text;
+    var newWords = words.Select(w => w.Length == length ? value : w);
+    var newText = string.Join(" ", newWords);
+    var result = new Result { Ori = ori, New = newText };
 
-app.MapDelete("/erase/{index:int}", (int index) =>
-{
-    if (index < myList.Count && index > -1)
-    {
-        myList.RemoveAt(index);
-        return Results.Ok($"Item in [{index}] deleted");
-    }
-    else
-    {
-        return Results.NotFound($"Item in [{index}] not found");
-    }
+    return xml
+        ? Results.Text(SerializeToXml(result), "application/xml")
+        : Results.Json(result);
 });
 
-
-app.MapDelete("/erase", ([FromForm] string value) =>
+app.MapDelete("/erase/{length:int}", (
+    [FromRoute] int length,
+    [FromForm] string text,
+    [FromHeader(Name = "xml")] bool xml = false) =>
 {
-    var index = myList.IndexOf(value);
-    if (index > -1)
-    {
-        myList.RemoveAt(index);
-        return Results.Ok($"Item in [{index}] deleted");
-    }
-    else
-    {
-        return Results.NotFound($"Item '${value}' not found");
-    }
+    if (length <= 0)
+        return Results.BadRequest(FormatError("'length' must be greater than 0"));
 
+    if (string.IsNullOrWhiteSpace(text))
+        return Results.BadRequest(FormatError("'text' cannot be empty"));
 
-}).DisableAntiforgery();
+    var words = text.Split(' ');
+    var ori = text;
+    var newWords = words.Where(w => w.Length != length);
+    var newText = string.Join(" ", newWords);
+    var result = new Result { Ori = ori, New = newText };
+
+    return xml
+        ? Results.Text(SerializeToXml(result), "application/xml")
+        : Results.Json(result);
+});
 
 app.Run();
 
+public class Result
+{
+    public string Ori { get; set; } = string.Empty;
+    public string New { get; set; } = string.Empty;
+}
