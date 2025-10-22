@@ -25,3 +25,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+//https://gemini.google.com/share/66cdc4f0386c

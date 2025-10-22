@@ -138,3 +138,4 @@ app.MapPatch("/", () =>
 });
 
 app.Run();
+//https://gemini.google.com/share/1c78ee5e165c
