@@ -1,0 +1,40 @@
+﻿@using System.Linq
+@model MVC.Models.TheModel
+
+@{
+    ViewData["Title"] = "Phrase Analyzer";
+}
+
+<h2>Phrase Analyzer</h2>
+
+<form asp-action="Index" asp-controller="Home" method="post" novalidate="novalidr="Phrase" class="form-label"></label>
+        <input asp-for="Phrase" class="form-control" />
+        <span asp-validation-for="Phrase" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Procesar</button>
+</form>
+
+<hr />
+
+@if (Model?.Counts?.Any() == true)
+{
+    <h4>Counts:</h4>
+    <ul>
+        @foreach (var kv in Model.Counts
+            .OrderByDescending(kv => kv.Value)
+            .ThenBy(kv => kv.Key))
+        {
+            <li>'@kv.Key': @kv.Value</li>
+        }
+    </ul>
+
+    @if (!string.IsNullOrEmpty(Model.Lower))
+    {
+        <p><strong>Lower case:</strong> @Model.Lower</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Upper))
+    {
+        <p><strong>Upper case:</strong> @Model.Upper</p>
+    }
+}
