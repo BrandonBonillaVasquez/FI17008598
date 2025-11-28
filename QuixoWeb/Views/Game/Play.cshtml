@@ -1,0 +1,259 @@
+﻿@model QuixoWeb.Models.ViewModels.GameViewModel
+@{
+    ViewData["Title"] = "Jugar Quixo";
+    var modoTexto = Model.ModoJuego == 2 ? "2 Jugadores" : "4 Jugadores";
+}
+
+<div class="container-fluid game-container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-info-circle"></i> Información de Partida</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Modo:</strong> @modoTexto</p>
+                    <p><strong>Estado:</strong> <span id="gameStatus">@Model.Estado</span></p>
+                    <p><strong>Partida ID:</strong> @Model.PartidaId</p>
+
+                    @if (Model.ModoJuego == 2)
+                    {
+                        <div class="player-indicator mt-3">
+                            <strong>Turno Actual:</strong>
+                            <div class="mt-2" id="currentPlayerIndicator">
+                                <span class="badge bg-info fs-6" id="currentPlayerBadge">
+                                    Jugador @Model.JugadorActual
+                                    (@(Model.JugadorActual == 1 ? "O" : "X"))
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="player-indicator mt-3">
+                            <strong>Turno Actual:</strong>
+                            <div class="mt-2" id="currentPlayerIndicator">
+                                <span class="badge bg-info fs-6" id="currentPlayerBadge">
+                                    Jugador @Model.JugadorActual
+                                    (@(Model.JugadorActual == 1 || Model.JugadorActual == 3 ? "Equipo A" : "Equipo B"))
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow mt-3">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-clock"></i> Tiempo Transcurrido</h5>
+                </div>
+                <div class="card-body text-center p-0">
+                    <div class="seven-segment-display" id="timeDisplay">
+                        <div class="digit-group">
+                            <div class="seven-segment" id="hour1">0</div>
+                            <div class="seven-segment" id="hour2">0</div>
+                        </div>
+                        <div class="separator">:</div>
+                        <div class="digit-group">
+                            <div class="seven-segment" id="min1">0</div>
+                            <div class="seven-segment" id="min2">0</div>
+                        </div>
+                        <div class="separator">:</div>
+                        <div class="digit-group">
+                            <div class="seven-segment" id="sec1">0</div>
+                            <div class="seven-segment" id="sec2">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mt-3">
+                <div class="card-body">
+                    <form asp-action="Restart" method="post" onsubmit="return confirm('¿Estás seguro de reiniciar la partida?');">
+                        <input type="hidden" name="id" value="@Model.PartidaId" />
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="fas fa-redo"></i> Reiniciar Partida
+                        </button>
+                    </form>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary w-100 mt-2">
+                        <i class="fas fa-home"></i> Volver al Menú
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="game-board-container">
+                @if (Model.ModoJuego == 2)
+                {
+                    <div class="player-label player-top">
+                        <span class="badge bg-primary fs-5">Jugador 1 (O)</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="player-label player-top">
+                        <span class="badge bg-primary fs-5">Jugador 1 - Equipo A</span>
+                    </div>
+                    <div class="player-label player-right">
+                        <span class="badge bg-danger fs-5">Jugador 2 - Equipo B</span>
+                    </div>
+                    <div class="player-label player-bottom">
+                        <span class="badge bg-primary fs-5">Jugador 3 - Equipo A</span>
+                    </div>
+                    <div class="player-label player-left">
+                        <span class="badge bg-danger fs-5">Jugador 4 - Equipo B</span>
+                    </div>
+                }
+
+                <div class="game-board" id="gameBoard">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        @for (int j = 0; j < 5; j++)
+                        {
+                            var simbolo = Model.Tablero[i, j];
+                            var orientacion = Model.OrientacionesPuntos[i, j];
+
+                            <div class="cube @(simbolo != "N" ? "has-symbol" : "")"
+                                 data-row="@i"
+                                 data-col="@j"
+                                 data-symbol="@simbolo"
+                                 data-orientation="@(orientacion?.ToString() ?? "")">
+                                <div class="cube-content">
+                                    @if (simbolo == "O")
+                                    {
+                                        <div class="symbol circle">
+                                            <svg viewBox="0 0 100 100">
+                                                <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="8" fill="none" />
+                                                @if (Model.ModoJuego == 4 && orientacion.HasValue)
+                                                {
+                                                    <circle cx="50" cy="@(orientacion.Value == 0 ? "20" : orientacion.Value == 2 ? "80" : "50")"
+                                                            r="5" fill="currentColor" />
+                                                }
+                                            </svg>
+                                        </div>
+                                    }
+                                    else if (simbolo == "X")
+                                    {
+                                        <div class="symbol cross">
+                                            <svg viewBox="0 0 100 100">
+                                                <line x1="20" y1="20" x2="80" y2="80" stroke="currentColor" stroke-width="8" />
+                                                <line x1="80" y1="20" x2="20" y2="80" stroke="currentColor" stroke-width="8" />
+                                                @if (Model.ModoJuego == 4 && orientacion.HasValue)
+                                                {
+                                                    <circle cx="50" cy="@(orientacion.Value == 0 ? "20" : orientacion.Value == 2 ? "80" : "50")"
+                                                            r="5" fill="currentColor" />
+                                                }
+                                            </svg>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                @if (Model.ModoJuego == 2)
+                {
+                    <div class="player-label player-bottom">
+                        <span class="badge bg-danger fs-5">Jugador 2 (X)</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-question-circle"></i> Instrucciones</h5>
+                </div>
+                <div class="card-body">
+                    <ol class="small">
+                        <li>Haz clic en un cubo de la periferia para seleccionarlo</li>
+                        <li>Haz clic en el extremo de destino para mover</li>
+                        <li>El cubo se desplazará empujando los demás</li>
+                        @if (Model.ModoJuego == 4)
+                        {
+                            <li>Elige la orientación del punto después de mover</li>
+                        }
+                        <li>Forma una línea de 5 para ganar</li>
+                    </ol>
+
+                    <div class="alert alert-warning small mt-3" id="gameMessage">
+                        @if (Model.EsPrimeraVuelta)
+                        {
+                            @:<strong>Primera Vuelta:</strong> Solo puedes tomar cubos neutros.
+                        }
+                        else
+                        {
+                            @:<strong>Turno:</strong> Selecciona un cubo para jugar.
+                        }
+                    </div>
+
+                </div>
+            </div>
+
+            @if (Model.Estado == "Finalizada")
+            {
+                <div class="card shadow mt-3 border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-trophy"></i> ¡Partida Finalizada!</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <h3 class="text-success">
+                            @if (Model.ModoJuego == 2)
+                            {
+                                @(Model.Ganador == "Jugador1" ? "Jugador 1 Ganó" : "Jugador 2 Ganó")
+                            }
+                            else
+                            {
+                                @(Model.Ganador == "EquipoA" ? "Equipo A Ganó" : "Equipo B Ganó")
+                            }
+                        </h3>
+                        <p class="text-muted">Tiempo: @Model.TiempoTranscurrido.ToString(@"hh\:mm\:ss")</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (Model.ModoJuego == 4)
+{
+    <div class="modal fade" id="orientationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Selecciona la Orientación del Punto</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="orientation-selector">
+                        <button class="btn btn-outline-primary btn-lg m-2" data-orientation="0">
+                            <i class="fas fa-arrow-up fa-2x"></i><br>Arriba
+                        </button>
+                        <button class="btn btn-outline-primary btn-lg m-2" data-orientation="1">
+                            <i class="fas fa-arrow-right fa-2x"></i><br>Derecha
+                        </button>
+                        <button class="btn btn-outline-primary btn-lg m-2" data-orientation="2">
+                            <i class="fas fa-arrow-down fa-2x"></i><br>Abajo
+                        </button>
+                        <button class="btn btn-outline-primary btn-lg m-2" data-orientation="3">
+                            <i class="fas fa-arrow-left fa-2x"></i><br>Izquierda
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <input type="hidden" id="partidaId" value="@Model.PartidaId" />
+    <input type="hidden" id="modoJuego" value="@Model.ModoJuego" />
+    <input type="hidden" id="jugadorActual" value="@Model.JugadorActual" />
+    <input type="hidden" id="estadoPartida" value="@Model.Estado" />
+    <input type="hidden" id="esPrimeraVuelta" value="@Model.EsPrimeraVuelta.ToString().ToLower()" />
+
+    <script src="~/js/seven-segment.js"></script>
+    <script src="~/js/game.js"></script>
+}

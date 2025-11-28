@@ -1,0 +1,114 @@
+﻿@model QuixoWeb.Models.ViewModels.HistoryViewModel
+@{
+    ViewData["Title"] = "Ver Historial de Partida";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">
+        <i class="fas fa-history"></i> Historial de Partida #@Model.Partida.PartidaId
+    </h2>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-info-circle"></i> Información de la Partida</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Modo:</strong> @Model.Partida.ModoJuego Jugadores
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Estado:</strong>
+                            <span class="badge bg-success">@Model.Partida.Estado</span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Ganador:</strong> @Model.Partida.Ganador
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Tiempo Total:</strong> @Model.Partida.TiempoTranscurrido.ToString(@"hh\:mm\:ss")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="fas fa-list"></i> Jugadas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" id="btnFirst">
+                            <i class="fas fa-fast-backward"></i> Primera
+                        </button>
+                        <button class="btn btn-outline-primary" id="btnPrevious">
+                            <i class="fas fa-step-backward"></i> Anterior
+                        </button>
+                        <button class="btn btn-outline-primary" id="btnNext">
+                            <i class="fas fa-step-forward"></i> Siguiente
+                        </button>
+                        <button class="btn btn-outline-primary" id="btnLast">
+                            <i class="fas fa-fast-forward"></i> Última
+                        </button>
+                    </div>
+
+                    <hr />
+
+                    <div class="text-center">
+                        <h6>Jugada Actual</h6>
+                        <div class="display-6" id="currentMove">0</div>
+                        <small class="text-muted">de @Model.TotalJugadas</small>
+                    </div>
+
+                    <hr />
+
+                    <div id="moveInfo">
+                        <p><strong>Jugador:</strong> <span id="movePlayer">-</span></p>
+                        <p><strong>Tiempo:</strong> <span id="moveTime">00:00:00</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <a asp-action="Export" asp-route-id="@Model.Partida.PartidaId"
+                       class="btn btn-success w-100">
+                        <i class="fas fa-download"></i> Exportar XML
+                    </a>
+                    <a asp-action="History" class="btn btn-secondary w-100 mt-2">
+                        <i class="fas fa-arrow-left"></i> Volver al Historial
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="game-board-container-history">
+                <div class="game-board" id="historyBoard">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        @for (int j = 0; j < 5; j++)
+                        {
+                            <div class="cube" data-row="@i" data-col="@j">
+                                <div class="cube-content"></div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <input type="hidden" id="partidaId" value="@Model.Partida.PartidaId" />
+    <input type="hidden" id="totalJugadas" value="@Model.TotalJugadas" />
+    <input type="hidden" id="modoJuego" value="@Model.Partida.ModoJuego" />
+
+    <script src="~/js/history.js"></script>
+}

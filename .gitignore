@@ -1,0 +1,27 @@
+
+# Ignorar carpetas de compilación en cualquier proyecto
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Paquetes/artefactos
+**/packages/
+*.nupkg
+*.snupkg
+
+# Logs y temporales
+*.log
+*.cache
+*.pdb
+
+# Rider/Resharper
+.idea/
+.ReSharper*/
+*_Resharper*/
+
+# Archivos del sistema
+.DS_Store

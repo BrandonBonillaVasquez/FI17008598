@@ -1,0 +1,544 @@
+﻿/* ========================================
+   CONTENEDOR DEL JUEGO - TEMA MADERA
+   ======================================== */
+
+.game-container {
+    padding: 20px;
+}
+
+/* ========================================
+   TABLERO DE JUEGO
+   ======================================== */
+
+.game-board-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #d7ccc8 0%, #bcaaa4 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(62, 39, 35, 0.2);
+    border: 4px solid #8d6e63;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(5, var(--cube-size));
+    grid-template-rows: repeat(5, var(--cube-size));
+    gap: 5px;
+    padding: 15px;
+    background: linear-gradient(135deg, #a1887f 0%, #8d6e63 100%);
+    border-radius: 15px;
+    box-shadow: inset 0 0 20px rgba(62, 39, 35, 0.3);
+    border: 3px solid #6d4c41;
+}
+
+/* ========================================
+   CUBOS
+   ======================================== */
+
+.cube {
+    width: var(--cube-size);
+    height: var(--cube-size);
+    background: linear-gradient(145deg, #efebe9, #d7ccc8);
+    border: 2px solid var(--cube-border);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px var(--cube-shadow);
+    position: relative;
+}
+
+    .cube:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 16px rgba(62, 39, 35, 0.25);
+        border-color: #6d4c41;
+        z-index: 10;
+    }
+
+    .cube.selected {
+        background: linear-gradient(145deg, #fff3e0, #ffe0b2);
+        border-color: #f57c00;
+        box-shadow: 0 0 20px rgba(245, 124, 0, 0.5);
+        transform: scale(1.1);
+    }
+
+    .cube.playable {
+        border-color: #7cb342;
+        background: linear-gradient(145deg, #dcedc8, #c5e1a5);
+    }
+
+        .cube.playable:hover {
+            background: linear-gradient(145deg, #c5e1a5, #aed581);
+        }
+
+    .cube.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+        .cube.disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 8px var(--cube-shadow);
+        }
+
+/* ========================================
+   CONTENIDO DEL CUBO
+   ======================================== */
+
+.cube-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* ========================================
+   SÍMBOLOS
+   ======================================== */
+
+.symbol {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .symbol svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .symbol.circle {
+        color: #5c6bc0;
+    }
+
+    .symbol.cross {
+        color: #d84315;
+    }
+
+/* Animación de aparición de símbolo */
+@keyframes symbolAppear {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(360deg);
+        opacity: 1;
+    }
+}
+
+.cube.has-symbol .symbol {
+    animation: symbolAppear 0.5s ease-out;
+}
+
+/* ========================================
+   ETIQUETAS DE JUGADORES
+   ======================================== */
+
+.player-label {
+    position: absolute;
+    z-index: 20;
+}
+
+    .player-label.player-top {
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .player-label.player-bottom {
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .player-label.player-left {
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .player-label.player-right {
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .player-label .badge {
+        font-size: 1rem;
+        padding: 10px 15px;
+        box-shadow: 0 4px 10px rgba(62, 39, 35, 0.2);
+        background-color: #6d4c41;
+    }
+
+/* ========================================
+   INDICADOR DE JUGADOR ACTUAL
+   ======================================== */
+
+.player-indicator {
+    padding: 15px;
+    background: linear-gradient(135deg, #6d4c41 0%, #5d4037 100%);
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+}
+
+#currentPlayerBadge {
+    animation: pulse 2s infinite;
+    font-size: 1.2rem !important;
+    padding: 12px 20px !important;
+    background-color: #8d6e63;
+}
+
+/* ========================================
+   TABLERO DE HISTORIAL
+   ======================================== */
+
+.game-board-container-history {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #d7ccc8 0%, #bcaaa4 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(62, 39, 35, 0.2);
+    border: 4px solid #8d6e63;
+}
+
+    .game-board-container-history .cube {
+        cursor: default;
+    }
+
+        .game-board-container-history .cube:hover {
+            transform: none;
+            box-shadow: 0 4px 8px var(--cube-shadow);
+            border-color: var(--cube-border);
+        }
+
+/* ========================================
+   MODAL DE ORIENTACIÓN
+   ======================================== */
+
+.orientation-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+}
+
+    .orientation-selector .btn {
+        padding: 30px;
+        font-size: 1rem;
+    }
+
+        .orientation-selector .btn:hover {
+            transform: scale(1.1);
+        }
+
+/* ========================================
+   MENSAJE DEL JUEGO
+   ======================================== */
+
+#gameMessage {
+    border-left: 5px solid #f57c00;
+    animation: fadeIn 0.5s ease-in;
+    background-color: #fff3e0;
+    border-radius: 8px;
+}
+
+/* ========================================
+   EFECTOS DE VICTORIA
+   ======================================== */
+
+.winning-line {
+    background: linear-gradient(145deg, #fff3e0, #ffe0b2) !important;
+    border-color: #f57c00 !important;
+    animation: victoryPulse 1s infinite;
+}
+
+@keyframes victoryPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(245, 124, 0, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(245, 124, 0, 0.8);
+    }
+}
+
+/* ========================================
+   EFECTOS DE PERIFERIA
+   ======================================== */
+
+.cube[data-row="0"],
+.cube[data-row="4"],
+.cube[data-col="0"],
+.cube[data-col="4"] {
+    position: relative;
+}
+
+    .cube[data-row="0"]::after,
+    .cube[data-row="4"]::after,
+    .cube[data-col="0"]::after,
+    .cube[data-col="4"]::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+.cube.peripheral-highlight::after {
+    border-color: rgba(124, 179, 66, 0.5);
+    box-shadow: 0 0 15px rgba(124, 179, 66, 0.3);
+}
+
+/* ========================================
+   MODO OSCURO (OPCIONAL)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    .game-board-container,
+    .game-board-container-history {
+        background: linear-gradient(135deg, #4e342e 0%, #3e2723 100%);
+    }
+
+    .cube {
+        background: linear-gradient(145deg, #5d4037, #4e342e);
+        border-color: #6d4c41;
+    }
+
+        .cube:hover {
+            border-color: #8d6e63;
+        }
+}
+
+/* ========================================
+   RESPONSIVE - TABLERO
+   ======================================== */
+
+@media (max-width: 1200px) {
+    :root {
+        --cube-size: 70px;
+    }
+}
+
+@media (max-width: 992px) {
+    :root {
+        --cube-size: 60px;
+    }
+
+    .game-board {
+        gap: 4px;
+        padding: 10px;
+    }
+
+    .symbol {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --cube-size: 50px;
+    }
+
+    .game-board {
+        gap: 3px;
+        padding: 8px;
+    }
+
+    .symbol {
+        width: 40px;
+        height: 40px;
+    }
+
+    .player-label .badge {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    :root {
+        --cube-size: 45px;
+    }
+
+    .game-board-container {
+        padding: 40px 10px;
+    }
+
+    .game-board {
+        gap: 2px;
+        padding: 5px;
+    }
+
+    .symbol {
+        width: 35px;
+        height: 35px;
+    }
+
+    .player-label.player-left,
+    .player-label.player-right {
+        transform: translateY(-50%) scale(0.8);
+    }
+
+    .player-label.player-top,
+    .player-label.player-bottom {
+        transform: translateX(-50%) scale(0.8);
+    }
+}
+
+/* ========================================
+   ANIMACIONES DE CARGA
+   ======================================== */
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.loading-skeleton {
+    animation: shimmer 2s infinite;
+    background: linear-gradient( to right, #efebe9 0%, #d7ccc8 20%, #efebe9 40%, #efebe9 100% );
+    background-size: 1000px 100%;
+}
+
+/* ========================================
+   TRANSICIONES SUAVES
+   ======================================== */
+
+.smooth-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   ESTADOS DE INTERACCIÓN
+   ======================================== */
+
+.cube.moving {
+    animation: moveAnimation 0.5s ease-in-out;
+}
+
+@keyframes moveAnimation {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.9) rotate(5deg);
+    }
+}
+
+.cube.placed {
+    animation: placeAnimation 0.4s ease-out;
+}
+
+@keyframes placeAnimation {
+    0% {
+        transform: scale(1.3) rotate(0deg);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1) rotate(360deg);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   TOOLTIPS PERSONALIZADOS
+   ======================================== */
+
+.custom-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+    .custom-tooltip .tooltip-text {
+        visibility: hidden;
+        background-color: #5d4037;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px 12px;
+        position: absolute;
+        z-index: 100;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .custom-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+
+/* ========================================
+   MEJORAS DE ACCESIBILIDAD
+   ======================================== */
+
+.cube:focus {
+    outline: 3px solid #6d4c41;
+    outline-offset: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ========================================
+   IMPRESIÓN
+   ======================================== */
+
+@media print {
+    .game-board-container {
+        box-shadow: none;
+        background: white;
+    }
+
+    .cube {
+        box-shadow: none;
+        border: 2px solid #000;
+    }
+
+    .btn,
+    .player-label,
+    .seven-segment-display {
+        display: none;
+    }
+}

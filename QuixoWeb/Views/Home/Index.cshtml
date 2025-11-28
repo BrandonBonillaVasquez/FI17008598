@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="text-center">
+    <h1 class="display-4 mb-4">
+        <i class="fas fa-th fa-2x text-primary"></i>
+        <br />
+        Bienvenido a Quixo
+    </h1>
+    
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-play-circle fa-4x text-success mb-3"></i>
+                <h5 class="card-title">Jugar Partida Nueva</h5>
+                <p class="card-text">Inicia una nueva partida para 2 o 4 jugadores</p>
+                <a asp-controller="Game" asp-action="SelectMode" class="btn btn-success btn-lg">
+                    <i class="fas fa-gamepad"></i> Jugar Ahora
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-history fa-4x text-info mb-3"></i>
+                <h5 class="card-title">Ver Historial</h5>
+                <p class="card-text">Revisa partidas anteriores y exporta a XML</p>
+                <a asp-controller="Game" asp-action="History" class="btn btn-info btn-lg">
+                    <i class="fas fa-list"></i> Ver Historial
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-4x text-warning mb-3"></i>
+                <h5 class="card-title">Estadísticas</h5>
+                <p class="card-text">Consulta la efectividad de jugadores y equipos</p>
+                <a asp-controller="Stats" asp-action="Index" class="btn btn-warning btn-lg">
+                    <i class="fas fa-trophy"></i> Ver Estadísticas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-info-circle"></i> ¿Cómo se juega Quixo?</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Objetivo</h6>
+                        <p>Crear una línea de 5 cubos con tu símbolo (horizontal, vertical o diagonal) en un tablero de 5x5.</p>
+
+                        <h6 class="text-primary mt-3">Modo 2 Jugadores</h6>
+                        <ul>
+                            <li>Jugador 1 usa círculos (O)</li>
+                            <li>Jugador 2 usa cruces (X)</li>
+                            <li>Solo puedes tomar cubos neutros o con tu símbolo de la periferia</li>
+                            <li>Empuja la fila/columna y coloca tu cubo en el extremo opuesto</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Modo 4 Jugadores</h6>
+                        <ul>
+                            <li>Se forman dos equipos: A (círculos) y B (cruces)</li>
+                            <li>Los jugadores se alternan en sentido horario</li>
+                            <li>La orientación del punto determina quién puede jugar el cubo</li>
+                            <li>Trabaja en equipo para formar la línea ganadora</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
